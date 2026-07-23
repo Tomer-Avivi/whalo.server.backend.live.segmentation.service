@@ -12,7 +12,7 @@ import { ApiMetricManager } from "@whalo/whalo.server.packages.module.v3.monitor
 import { SdkConfigurationData } from "@whalo/whalo.winfra.server.packages.entities";
 import { ConfigurationClientFactor, IConfigurationCustomSdk } from "@whalo/whalo.winfra.server.packages.sdk";
 
-import { LiveSegmentationBL } from "./BusinessLogic/LiveSegmentationBL";
+import { LiveSegmentationBL } from "./Bl/LiveSegmentationBL";
 import { LiveSegmentationController } from "./Controllers/LiveSegmentationController";
 import { ConfigurationModule } from "./Modules/ConfigurationModule";
 
@@ -110,7 +110,7 @@ export class Service {
     });
 
     this._app.post("/v1/players/:internalPlayerId/ticket", async (request, response, next) => {
-      (response as any).endPointName = "UpdatePlayerSegments";
+      (response as any).endPointName = "create.ticket";
       try {
         const { assignedSegments, removedSegments, propIds } = request.body;
         const result = await this._liveSegmentationController.CreateTicket(
@@ -126,7 +126,7 @@ export class Service {
     });
 
     this._app.post("/v1/apply/ticket", async (request, response, next) => {
-      (response as any).endPointName = "UpdatePlayerSegments";
+      (response as any).endPointName = "apply.ticket";
       try {
         const { ticketId, internalPlayerId } = request.body;
         const result = await this._liveSegmentationController.ApplyTicket(internalPlayerId, ticketId);

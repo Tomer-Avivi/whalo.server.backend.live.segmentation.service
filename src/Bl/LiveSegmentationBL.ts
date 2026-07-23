@@ -60,7 +60,8 @@ export class LiveSegmentationBL {
   public async ApplyTicket(internalPlayerId: string, ticketId: string) {
     this._logger.Debug(() => `LiveSegmentationBL.ProcessTicket status=start; ticketId=${ticketId};`);
 
-    const ticket = await this._liveSegmentTicketRepo.RemoveTicket(internalPlayerId, ticketId);
+    // const ticket = await this.RemoveTicket(internalPlayerId, ticketId);
+    const ticket = await this._liveSegmentTicketRepo.GetTicket(internalPlayerId, ticketId);
 
     if (!ticket) {
       throw new Error(`Ticket ${ticketId} not found for player ${internalPlayerId}`);
@@ -69,6 +70,27 @@ export class LiveSegmentationBL {
 
     this._logger.Debug(() => `LiveSegmentationBL.ProcessTicket status=done; ticketId=${ticketId};`);
     return { ...ticket, propIds: deletePropIds };
+  }
+
+  /**
+   * RemoveTicket
+   * Removes a live segment ticket from Redis, logging and swallowing any failure.
+   * @param internalPlayerId - the player whose ticket is being removed
+   * @param ticketId - the ticket to remove
+   * @returns the removed ticket, or null when it could not be removed
+   */
+  private async RemoveTicket(internalPlayerId: string, ticketId: string) {
+    try {
+      const ticket = await this._liveSegmentTicketRepo.RemoveTicket(internalPlayerId, ticketId);
+      delete (ticket as any).internalPlayerId;
+      return ticket;
+    } catch (error) {
+      this._logger.Error(
+        () =>
+          `LiveSegmentationBL.RemoveTicket status=error; internalPlayerId=${internalPlayerId}; ticketId=${ticketId}; error=${error};`
+      );
+      return null;
+    }
   }
 
   /**

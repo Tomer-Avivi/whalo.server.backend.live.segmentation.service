@@ -1,4 +1,4 @@
-import { LiveSegmentationBL } from "../BusinessLogic/LiveSegmentationBL";
+import { LiveSegmentationBL } from "../Bl/LiveSegmentationBL";
 
 export class LiveSegmentationController {
   private readonly _liveSegmentationBL: LiveSegmentationBL;
